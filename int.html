@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تهيئة قاعدة البيانات - Mahmoud & Rewan</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- خطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --soft-rose: #e8c4b8;
+            --soft-rose-dark: #d4a99a;
+            --text-dark: #3d2c2c;
+            --text-medium: #6b5b5b;
+            --white: #ffffff;
+            --cream: #fefcf9;
+            --shadow-soft: 0 8px 30px rgba(180, 150, 140, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #fef7f3 0%, #fefcf9 50%, #fef8f4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-dark);
+        }
+
+        /* خلفية ناعمة */
+        .bg-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.03;
+            font-size: 300px;
+        }
+        .bg-decoration.top-right { top: -100px; right: -80px; }
+        .bg-decoration.bottom-left { bottom: -100px; left: -80px; }
+
+        /* الحاوية الرئيسية */
+        .setup-container {
+            position: relative;
+            z-index: 1;
+            background: var(--white);
+            max-width: 550px;
+            width: 100%;
+            padding: 50px 35px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            border: 1px solid rgba(200, 180, 170, 0.2);
+        }
+
+        .setup-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .setup-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .setup-subtitle {
+            color: var(--text-medium);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .couple-names {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            color: var(--soft-rose-dark);
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--soft-rose), transparent);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        /* معلومات قاعدة البيانات */
+        .db-info {
+            background: #fefaf7;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            text-align: right;
+            border: 1px solid rgba(200, 180, 170, 0.15);
+        }
+
+        .db-info h4 {
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .db-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(200, 180, 170, 0.1);
+            font-size: 0.85rem;
+            color: var(--text-medium);
+        }
+
+        .db-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .db-info-item span:last-child {
+            font-weight: 600;
+            color: var(--text-dark);
+            direction: ltr;
+        }
+
+        /* حالة التهيئة */
+        .status-area {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .status-area.loading {
+            display: block;
+            background: #fef9f0;
+            color: #8b7355;
+            border: 1px solid #f0e0c0;
+        }
+
+        .status-area.success {
+            display: block;
+            background: #f0faf0;
+            color: #4a7c4a;
+            border: 1px solid #c8e0c8;
+        }
+
+        .status-area.error {
+            display: block;
+            background: #fef5f5;
+            color: #8b4a4a;
+            border: 1px solid #f0c8c8;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* زر التهيئة */
+        .setup-button {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #e8c4b8, #dbb5a8);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(200, 170, 155, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .setup-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(200, 170, 155, 0.45);
+            background: linear-gradient(135deg, #dbb5a8, #cfa899);
+        }
+
+        .setup-button:active {
+            transform: translateY(-1px) scale(0.97);
+        }
+
+        .setup-button:disabled {
+            background: #d5c5b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        .setup-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+            animation: buttonShine 3s ease-in-out infinite;
+        }
+
+        @keyframes buttonShine {
+            0%, 100% { transform: translateX(-100%) translateY(-100%); }
+            50% { transform: translateX(100%) translateY(100%); }
+        }
+
+        /* خطوات التنفيذ */
+        .steps-list {
+            text-align: right;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .steps-list.show {
+            display: block;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            font-size: 0.88rem;
+            color: var(--text-medium);
+            transition: all 0.3s ease;
+        }
+
+        .step-item.completed {
+            color: #4a7c4a;
+        }
+
+        .step-item.failed {
+            color: #8b4a4a;
+        }
+
+        .step-check {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            background: #f0f0f0;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .step-item.completed .step-check {
+            background: #e0f0e0;
+            color: #4a7c4a;
+        }
+
+        .step-item.failed .step-check {
+            background: #f0e0e0;
+            color: #8b4a4a;
+        }
+
+        /* ملاحظة */
+        .note {
+            font-size: 0.8rem;
+            color: #b0a0a0;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .setup-container {
+                padding: 35px 20px;
+                border-radius: 18px;
+            }
+            .setup-title {
+                font-size: 1.8rem;
+            }
+            .setup-icon {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- زخارف خلفية -->
+    <div class="bg-decoration top-right">🌸</div>
+    <div class="bg-decoration bottom-left">🌺</div>
+
+    <!-- الحاوية الرئيسية -->
+    <div class="setup-container">
+        <div class="setup-icon">🗄️</div>
+        <h1 class="setup-title">تهيئة قاعدة البيانات</h1>
+        <p class="setup-subtitle">إعداد هيكل قاعدة البيانات لدعوة الزفاف</p>
+        <p class="couple-names">Mahmoud & Rewan</p>
+
+        <div class="divider"></div>
+
+        <!-- معلومات الاتصال -->
+        <div class="db-info">
+            <h4>📋 معلومات قاعدة البيانات</h4>
+            <div class="db-info-item">
+                <span>المشروع:</span>
+                <span>mahmoudrewan</span>
+            </div>
+            <div class="db-info-item">
+                <span>قاعدة البيانات:</span>
+                <span>Realtime Database</span>
+            </div>
+            <div class="db-info-item">
+                <span>المنطقة:</span>
+                <span>us-central1</span>
+            </div>
+            <div class="db-info-item">
+                <span>المسارات المطلوبة:</span>
+                <span>settings, comments</span>
+            </div>
+        </div>
+
+        <!-- حالة التهيئة -->
+        <div class="status-area" id="statusArea">
+            <div class="status-icon" id="statusIcon"></div>
+            <div id="statusMessage"></div>
+        </div>
+
+        <!-- خطوات التنفيذ -->
+        <div class="steps-list" id="stepsList">
+            <div class="step-item" id="step1">
+                <span class="step-check">1</span>
+                <span>الاتصال بقاعدة البيانات</span>
+            </div>
+            <div class="step-item" id="step2">
+                <span class="step-check">2</span>
+                <span>إنشاء مسار الإعدادات (settings)</span>
+            </div>
+            <div class="step-item" id="step3">
+                <span class="step-check">3</span>
+                <span>إنشاء مسار التعليقات (comments)</span>
+            </div>
+            <div class="step-item" id="step4">
+                <span class="step-check">4</span>
+                <span>التحقق من صحة البيانات</span>
+            </div>
+        </div>
+
+        <!-- زر التهيئة -->
+        <button class="setup-button" id="setupButton" onclick="initializeDatabase()">
+            🚀 بدء تهيئة قاعدة البيانات
+        </button>
+
+        <p class="note">
+            ⚠️ <strong>ملاحظة هامة:</strong> هذا الإجراء مطلوب مرة واحدة فقط.<br>
+            سيتم إنشاء هيكل البيانات الأساسي مع إعدادات افتراضية.<br>
+            البيانات الموجودة مسبقاً لن تتأثر.
+        </p>
+    </div>
+
+    <script>
+        // ============================================
+        // إعدادات Firebase
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBU4KXydbqrKpiN6U6gXDv8ic7IQS6Ard0",
+            authDomain: "mahmoudrewan.firebaseapp.com",
+            databaseURL: "https://mahmoudrewan-default-rtdb.firebaseio.com",
+            projectId: "mahmoudrewan",
+            storageBucket: "mahmoudrewan.firebasestorage.app",
+            messagingSenderId: "621529428304",
+            appId: "1:621529428304:web:7391f1771b4033d4687c55",
+            measurementId: "G-4RP5WLVVRJ"
+        };
+
+        let database = null;
+        let isInitialized = false;
+
+        // ============================================
+        // تهيئة Firebase
+        // ============================================
+        function initializeFirebaseApp() {
+            try {
+                if (!firebase.apps || !firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                database = firebase.database();
+                isInitialized = true;
+                console.log('✅ Firebase جاهز');
+                return true;
+            } catch (error) {
+                console.error('❌ فشل تهيئة Firebase:', error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // تحديث حالة الخطوة
+        // ============================================
+        function updateStep(stepNumber, status, message) {
+            const step = document.getElementById('step' + stepNumber);
+            const stepsList = document.getElementById('stepsList');
+            
+            stepsList.classList.add('show');
+            
+            // إزالة الحالات السابقة
+            step.classList.remove('completed', 'failed');
+            
+            if (status === 'loading') {
+                step.querySelector('.step-check').textContent = '⏳';
+            } else if (status === 'completed') {
+                step.classList.add('completed');
+                step.querySelector('.step-check').textContent = '✅';
+            } else if (status === 'failed') {
+                step.classList.add('failed');
+                step.querySelector('.step-check').textContent = '❌';
+            }
+        }
+
+        // ============================================
+        // عرض حالة التهيئة
+        // ============================================
+        function showStatus(type, icon, message) {
+            const statusArea = document.getElementById('statusArea');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            statusArea.className = 'status-area ' + type;
+            statusIcon.textContent = icon;
+            statusMessage.textContent = message;
+        }
+
+        // ============================================
+        // الدالة الرئيسية: تهيئة قاعدة البيانات
+        // ============================================
+        async function initializeDatabase() {
+            const setupButton = document.getElementById('setupButton');
+            
+            // تعطيل الزر أثناء التنفيذ
+            setupButton.disabled = true;
+            setupButton.textContent = '⏳ جاري التهيئة...';
+            
+            // إخفاء الحالة السابقة
+            document.getElementById('statusArea').className = 'status-area';
+            document.getElementById('stepsList').classList.remove('show');
+            
+            // إعادة ضبط الخطوات
+            for (let i = 1; i <= 4; i++) {
+                const step = document.getElementById('step' + i);
+                step.classList.remove('completed', 'failed');
+                step.querySelector('.step-check').textContent = i;
+            }
+            
+            // الخطوة 1: الاتصال بقاعدة البيانات
+            updateStep(1, 'loading');
+            showStatus('loading', '🔄', 'جاري الاتصال بقاعدة البيانات...');
+            
+            if (!isInitialized) {
+                const connected = initializeFirebaseApp();
+                if (!connected) {
+                    updateStep(1, 'failed');
+                    showStatus('error', '❌', 'فشل الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.');
+                    resetButton(setupButton);
+                    return;
+                }
+            }
+            
+            // انتظار قليل للتأكد من الاتصال
+            await sleep(800);
+            updateStep(1, 'completed');
+            
+            // الخطوة 2: إنشاء مسار الإعدادات
+            updateStep(2, 'loading');
+            showStatus('loading', '🔄', 'جاري إنشاء مسار الإعدادات (settings)...');
+            
+            try {
+                const settingsRef = database.ref('settings');
+                
+                // البيانات الافتراضية للإعدادات
+                const defaultSettings = {
+                    image: "",
+                    date: "15 يونيو 2026",
+                    time: "7:00 مساءً",
+                    targetDateTime: "2026-06-15T19:00",
+                    venue: "",
+                    mapLink: "",
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+                
+                await settingsRef.update(defaultSettings);
+                console.log('✅ تم إنشاء مسار settings');
+                updateStep(2, 'completed');
+            } catch (error) {
+                console.error('❌ فشل إنشاء مسار settings:', error);
+                updateStep(2, 'failed');
+                showStatus('error', '❌', 'فشل إنشاء مسار الإعدادات: ' + error.message);
+                resetButton(setupButton);
+                return;
+            }
+            
+            await sleep(600);
+            
+            // الخطوة 3: إنشاء مسار التعليقات
+            updateStep(3, 'loading');
+            showStatus('loading', '🔄', 'جاري إنشاء مسار التعليقات (comments)...');
+            
+            try {
+                const commentsRef = database.ref('comments');
+                
+                // التحقق من وجود مسار comments، إذا لم يكن موجوداً ننشئ تعليق ترحيبي
+                const snapshot = await commentsRef.once('value');
+                
+                if (!snapshot.exists()) {
+                    // إنشاء تعليق ترحيبي أولي
+                    const welcomeComment = {
+                        name: "فريق التنظيم",
+                        side: "groom",
+                        status: "attending",
+                        message: "أهلاً وسهلاً بكم في حفل زفاف محمود وروان! 💝 يسعدنا مشاركتكم لنا أجمل اللحظات.",
+                        timestamp: Date.now()
+                    };
+                    
+                    await commentsRef.push(welcomeComment);
+                    console.log('✅ تم إنشاء مسار comments مع تعليق ترحيبي');
+                } else {
+                    console.log('ℹ️ مسار comments موجود مسبقاً، لم يتم التعديل عليه');
+                }
+                
+                updateStep(3, 'completed');
+            } catch (error) {
+                console.error('❌ فشل إنشاء مسار comments:', error);
+                updateStep(3, 'failed');
+                showStatus('error', '❌', 'فشل إنشاء مسار التعليقات: ' + error.message);
+                resetButton(setupButton);
+                return;
+            }
+            
+            await sleep(600);
+            
+            // الخطوة 4: التحقق من صحة البيانات
+            updateStep(4, 'loading');
+            showStatus('loading', '🔄', 'جاري التحقق من صحة البيانات...');
+            
+            try {
+                // قراءة البيانات للتأكد
+                const settingsSnapshot = await database.ref('settings').once('value');
+                const commentsSnapshot = await database.ref('comments').once('value');
+                
+                if (settingsSnapshot.exists() && commentsSnapshot.exists()) {
+                    const settingsData = settingsSnapshot.val();
+                    const commentsData = commentsSnapshot.val();
+                    
+                    console.log('✅ التحقق من البيانات:', {
+                        settings: Object.keys(settingsData),
+                        commentsCount: Object.keys(commentsData).length
+                    });
+                    
+                    updateStep(4, 'completed');
+                    
+                    // نجاح كامل
+                    showStatus('success', '🎉', 
+                        'تمت تهيئة قاعدة البيانات بنجاح!\n\n' +
+                        '✅ مسار الإعدادات (settings) جاهز\n' +
+                        '✅ مسار التعليقات (comments) جاهز\n\n' +
+                        'يمكنك الآن استخدام دعوة الزفاف بشكل طبيعي.'
+                    );
+                    
+                    setupButton.textContent = '✅ تمت التهيئة بنجاح';
+                    setupButton.style.background = 'linear-gradient(135deg, #a8d5a2, #8cc088)';
+                    
+                    // تفعيل الزر مرة أخرى بعد 5 ثواني
+                    setTimeout(() => {
+                        resetButton(setupButton);
+                    }, 5000);
+                    
+                } else {
+                    throw new Error('بعض المسارات غير موجودة بعد التهيئة');
+                }
+            } catch (error) {
+                console.error('❌ فشل التحقق:', error);
+                updateStep(4, 'failed');
+                showStatus('error', '❌', 'فشل التحقق من البيانات: ' + error.message);
+                resetButton(setupButton);
+                return;
+            }
+            
+            console.log('🎉 تمت تهيئة قاعدة البيانات بالكامل بنجاح!');
+            console.log('📊 ملخص التهيئة:');
+            console.log('  - مسار settings: ✅');
+            console.log('  - مسار comments: ✅');
+            console.log('  - الإعدادات الافتراضية: ✅');
+            console.log('  - تعليق ترحيبي: ✅');
+        }
+
+        // ============================================
+        // دوال مساعدة
+        // ============================================
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function resetButton(button) {
+            button.disabled = false;
+            button.textContent = '🚀 بدء تهيئة قاعدة البيانات';
+            button.style.background = 'linear-gradient(135deg, #e8c4b8, #dbb5a8)';
+        }
+
+        // ============================================
+        // التحقق من حالة الاتصال عند تحميل الصفحة
+        // ============================================
+        function checkConnectionOnLoad() {
+            if (initializeFirebaseApp()) {
+                console.log('✅ الاتصال بقاعدة البيانات جاهز');
+                
+                // التحقق من وجود البيانات
+                database.ref('settings').once('value')
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            console.log('ℹ️ قاعدة البيانات مهيأة مسبقاً');
+                            console.log('الإعدادات الحالية:', snapshot.val());
+                            
+                            // إظهار رسالة للمستخدم
+                            const statusArea = document.getElementById('statusArea');
+                            statusArea.className = 'status-area success';
+                            document.getElementById('statusIcon').textContent = '✅';
+                            document.getElementById('statusMessage').textContent = 
+                                'قاعدة البيانات مهيأة مسبقاً وتحتوي على بيانات. يمكنك إعادة التهيئة إذا أردت تحديث الإعدادات الافتراضية.';
+                        } else {
+                            console.log('ℹ️ قاعدة البيانات غير مهيأة بعد');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('❌ فشل قراءة الإعدادات:', error);
+                    });
+            }
+        }
+
+        // ============================================
+        // بدء التشغيل
+        // ============================================
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('🌸 أداة تهيئة قاعدة البيانات - Mahmoud & Rewan');
+            console.log('📅 نقابة تكنولوجيا المعلومات والبرمجيات المصرية © 2026');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            checkConnectionOnLoad();
+        });
+
+        // ============================================
+        // معالج الأخطاء العام
+        // ============================================
+        window.addEventListener('error', (event) => {
+            console.error('❌ خطأ غير متوقع:', event.error);
+        });
+    </script>
+</body>
+</html>
