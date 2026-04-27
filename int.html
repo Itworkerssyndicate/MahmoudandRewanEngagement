@@ -21,6 +21,15 @@
             --white: #ffffff;
             --cream: #fefcf9;
             --shadow-soft: 0 8px 30px rgba(180, 150, 140, 0.15);
+            --error-bg: #fef5f5;
+            --error-border: #f0c8c8;
+            --error-text: #8b4a4a;
+            --success-bg: #f0faf0;
+            --success-border: #c8e0c8;
+            --success-text: #4a7c4a;
+            --warning-bg: #fffdf5;
+            --warning-border: #f0e8c8;
+            --warning-text: #8b7a4a;
         }
 
         * {
@@ -56,18 +65,20 @@
             position: relative;
             z-index: 1;
             background: var(--white);
-            max-width: 550px;
+            max-width: 600px;
             width: 100%;
-            padding: 50px 35px;
+            padding: 45px 35px;
             border-radius: 24px;
             box-shadow: var(--shadow-soft);
             text-align: center;
             border: 1px solid rgba(200, 180, 170, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .setup-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
+            font-size: 4rem;
+            margin-bottom: 15px;
             animation: gentleFloat 3s ease-in-out infinite;
         }
 
@@ -78,24 +89,24 @@
 
         .setup-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2.2rem;
+            font-size: 2rem;
             color: var(--text-dark);
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-weight: 700;
         }
 
         .setup-subtitle {
             color: var(--text-medium);
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            line-height: 1.8;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            line-height: 1.6;
         }
 
         .couple-names {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             color: var(--soft-rose-dark);
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-weight: 600;
             letter-spacing: 2px;
         }
@@ -104,51 +115,151 @@
             width: 60px;
             height: 2px;
             background: linear-gradient(90deg, transparent, var(--soft-rose), transparent);
-            margin: 20px auto;
+            margin: 15px auto;
             border-radius: 2px;
         }
 
-        /* معلومات قاعدة البيانات */
-        .db-info {
-            background: #fefaf7;
-            padding: 20px;
+        /* قسم المشكلة والحل */
+        .alert-box {
+            padding: 18px;
             border-radius: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            text-align: right;
+            border: 2px solid;
+            line-height: 1.7;
+        }
+
+        .alert-box.warning {
+            background: var(--warning-bg);
+            border-color: var(--warning-border);
+            color: var(--warning-text);
+        }
+
+        .alert-box.error {
+            background: var(--error-bg);
+            border-color: var(--error-border);
+            color: var(--error-text);
+        }
+
+        .alert-box.success {
+            background: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success-text);
+        }
+
+        .alert-box h4 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .alert-box p {
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        /* كود القواعد */
+        .rules-code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+            direction: ltr;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            margin: 15px 0;
+            overflow-x: auto;
+            white-space: pre;
+            position: relative;
+        }
+
+        .rules-code .keyword {
+            color: #569cd6;
+        }
+
+        .rules-code .string {
+            color: #ce9178;
+        }
+
+        .rules-code .comment {
+            color: #6a9955;
+        }
+
+        .rules-code .property {
+            color: #9cdcfe;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #3d3d3d;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #555;
+        }
+
+        .copy-btn.copied {
+            background: #4a7c4a;
+        }
+
+        /* خطوات */
+        .steps-container {
+            background: #fefaf7;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
             text-align: right;
             border: 1px solid rgba(200, 180, 170, 0.15);
         }
 
-        .db-info h4 {
-            color: var(--text-dark);
+        .steps-container h4 {
             margin-bottom: 12px;
+            color: var(--text-dark);
             font-size: 1rem;
         }
 
-        .db-info-item {
+        .step-item {
             display: flex;
-            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(200, 180, 170, 0.1);
             font-size: 0.85rem;
             color: var(--text-medium);
+            line-height: 1.6;
         }
 
-        .db-info-item:last-child {
-            border-bottom: none;
-        }
-
-        .db-info-item span:last-child {
-            font-weight: 600;
-            color: var(--text-dark);
-            direction: ltr;
+        .step-number {
+            width: 26px;
+            height: 26px;
+            min-width: 26px;
+            border-radius: 50%;
+            background: #f0e8e3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-medium);
+            margin-top: 2px;
         }
 
         /* حالة التهيئة */
         .status-area {
-            margin: 20px 0;
+            margin: 15px 0;
             padding: 15px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             display: none;
             transition: all 0.3s ease;
         }
@@ -174,35 +285,33 @@
             border: 1px solid #f0c8c8;
         }
 
-        .status-icon {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+        /* أزرار */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        /* زر التهيئة */
         .setup-button {
-            width: 100%;
-            padding: 18px 30px;
+            flex: 1;
+            min-width: 180px;
+            padding: 16px 25px;
             background: linear-gradient(135deg, #e8c4b8, #dbb5a8);
             color: #fff;
             border: none;
             border-radius: 14px;
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 1px;
             box-shadow: 0 8px 25px rgba(200, 170, 155, 0.3);
-            position: relative;
-            overflow: hidden;
-            margin-top: 10px;
         }
 
         .setup-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(200, 170, 155, 0.45);
-            background: linear-gradient(135deg, #dbb5a8, #cfa899);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(200, 170, 155, 0.4);
         }
 
         .setup-button:active {
@@ -217,93 +326,46 @@
             opacity: 0.7;
         }
 
-        .setup-button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
-            animation: buttonShine 3s ease-in-out infinite;
+        .setup-button.secondary {
+            background: #fff;
+            color: var(--text-dark);
+            border: 2px solid #e0d5d0;
+            box-shadow: none;
         }
 
-        @keyframes buttonShine {
-            0%, 100% { transform: translateX(-100%) translateY(-100%); }
-            50% { transform: translateX(100%) translateY(100%); }
+        .setup-button.secondary:hover {
+            background: #fefaf7;
+            border-color: var(--soft-rose);
         }
 
-        /* خطوات التنفيذ */
-        .steps-list {
-            text-align: right;
-            margin: 20px 0;
-            display: none;
+        .test-button {
+            background: linear-gradient(135deg, #a8b5a2, #8fa88a);
+            font-size: 0.9rem;
+            padding: 12px 20px;
         }
 
-        .steps-list.show {
-            display: block;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 0;
-            font-size: 0.88rem;
-            color: var(--text-medium);
-            transition: all 0.3s ease;
-        }
-
-        .step-item.completed {
-            color: #4a7c4a;
-        }
-
-        .step-item.failed {
-            color: #8b4a4a;
-        }
-
-        .step-check {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            background: #f0f0f0;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .step-item.completed .step-check {
-            background: #e0f0e0;
-            color: #4a7c4a;
-        }
-
-        .step-item.failed .step-check {
-            background: #f0e0e0;
-            color: #8b4a4a;
-        }
-
-        /* ملاحظة */
         .note {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: #b0a0a0;
-            margin-top: 20px;
+            margin-top: 18px;
             line-height: 1.6;
         }
 
         /* Responsive */
         @media (max-width: 480px) {
             .setup-container {
-                padding: 35px 20px;
-                border-radius: 18px;
+                padding: 30px 18px;
+                border-radius: 16px;
             }
             .setup-title {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
-            .setup-icon {
-                font-size: 3.5rem;
+            .button-group {
+                flex-direction: column;
+            }
+            .rules-code {
+                font-size: 0.7rem;
+                padding: 14px;
             }
         }
     </style>
@@ -316,69 +378,106 @@
 
     <!-- الحاوية الرئيسية -->
     <div class="setup-container">
-        <div class="setup-icon">🗄️</div>
-        <h1 class="setup-title">تهيئة قاعدة البيانات</h1>
-        <p class="setup-subtitle">إعداد هيكل قاعدة البيانات لدعوة الزفاف</p>
+        <div class="setup-icon">🔧</div>
+        <h1 class="setup-title">أداة تهيئة قاعدة البيانات</h1>
+        <p class="setup-subtitle">حل مشكلة الصلاحيات وتهيئة قاعدة البيانات</p>
         <p class="couple-names">Mahmoud & Rewan</p>
 
         <div class="divider"></div>
 
-        <!-- معلومات الاتصال -->
-        <div class="db-info">
-            <h4>📋 معلومات قاعدة البيانات</h4>
-            <div class="db-info-item">
-                <span>المشروع:</span>
-                <span>mahmoudrewan</span>
+        <!-- رسالة الخطأ والحل -->
+        <div class="alert-box warning" id="permissionWarning">
+            <h4>⚠️ المشكلة: قاعدة البيانات ترفض الكتابة</h4>
+            <p>السبب: إعدادات الأمان (Rules) في Firebase تمنع الكتابة حالياً.</p>
+            <p><strong>الحل:</strong> اتبع الخطوات أدناه لتحديث قواعد الأمان أولاً، ثم اضغط زر التهيئة.</p>
+        </div>
+
+        <!-- كود القواعد المطلوب -->
+        <div class="alert-box warning">
+            <h4>📋 الخطوة 1: نسخ قواعد الأمان</h4>
+            <p>انسخ الكود التالي واذهب إلى Firebase Console لتحديث القواعد:</p>
+        </div>
+
+        <div class="rules-code" id="rulesCode">
+            <span class="copy-btn" onclick="copyRules()" id="copyBtn">📋 نسخ</span>
+<span class="comment">// قواعد أمان Firebase Realtime Database</span>
+<span class="comment">// لدعوة زفاف Mahmoud & Rewan</span>
+{
+  <span class="property">"rules"</span>: {
+    <span class="property">"settings"</span>: {
+      <span class="property">".read"</span>: <span class="keyword">true</span>,
+      <span class="property">".write"</span>: <span class="keyword">true</span>
+    },
+    <span class="property">"comments"</span>: {
+      <span class="property">".read"</span>: <span class="keyword">true</span>,
+      <span class="property">".write"</span>: <span class="keyword">true</span>,
+      <span class="property">"$commentId"</span>: {
+        <span class="property">".validate"</span>: <span class="string">"newData.hasChildren(['name', 'side', 'status', 'message', 'timestamp'])"</span>,
+        <span class="property">"name"</span>: {
+          <span class="property">".validate"</span>: <span class="string">"newData.isString() && newData.val().length <= 100"</span>
+        },
+        <span class="property">"side"</span>: {
+          <span class="property">".validate"</span>: <span class="string">"newData.isString() && (newData.val() === 'groom' || newData.val() === 'bride')"</span>
+        },
+        <span class="property">"status"</span>: {
+          <span class="property">".validate"</span>: <span class="string">"newData.isString() && (newData.val() === 'attending' || newData.val() === 'maybe' || newData.val() === 'declined')"</span>
+        },
+        <span class="property">"message"</span>: {
+          <span class="property">".validate"</span>: <span class="string">"newData.isString() && newData.val().length <= 500"</span>
+        },
+        <span class="property">"timestamp"</span>: {
+          <span class="property">".validate"</span>: <span class="string">"newData.isNumber()"</span>
+        }
+      }
+    }
+  }
+}</div>
+
+        <!-- خطوات تطبيق القواعد -->
+        <div class="steps-container">
+            <h4>📝 الخطوة 2: تطبيق القواعد في Firebase Console</h4>
+            <div class="step-item">
+                <span class="step-number">1</span>
+                <span>اذهب إلى <a href="https://console.firebase.google.com/project/mahmoudrewan/database/mahmoudrewan-default-rtdb/rules" target="_blank" style="color: #569cd6;">Firebase Console - Rules</a></span>
             </div>
-            <div class="db-info-item">
-                <span>قاعدة البيانات:</span>
-                <span>Realtime Database</span>
+            <div class="step-item">
+                <span class="step-number">2</span>
+                <span>احذف القواعد القديمة الموجودة</span>
             </div>
-            <div class="db-info-item">
-                <span>المنطقة:</span>
-                <span>us-central1</span>
+            <div class="step-item">
+                <span class="step-number">3</span>
+                <span>الصق الكود المنسوخ أعلاه 👆</span>
             </div>
-            <div class="db-info-item">
-                <span>المسارات المطلوبة:</span>
-                <span>settings, comments</span>
+            <div class="step-item">
+                <span class="step-number">4</span>
+                <span>اضغط زر <strong>"Publish"</strong> أو <strong>"نشر"</strong></span>
+            </div>
+            <div class="step-item">
+                <span class="step-number">5</span>
+                <span>ارجع لهذه الصفحة واضغط "اختبار الاتصال" ثم "بدء التهيئة"</span>
             </div>
         </div>
+
+        <div class="divider"></div>
 
         <!-- حالة التهيئة -->
         <div class="status-area" id="statusArea">
-            <div class="status-icon" id="statusIcon"></div>
             <div id="statusMessage"></div>
         </div>
 
-        <!-- خطوات التنفيذ -->
-        <div class="steps-list" id="stepsList">
-            <div class="step-item" id="step1">
-                <span class="step-check">1</span>
-                <span>الاتصال بقاعدة البيانات</span>
-            </div>
-            <div class="step-item" id="step2">
-                <span class="step-check">2</span>
-                <span>إنشاء مسار الإعدادات (settings)</span>
-            </div>
-            <div class="step-item" id="step3">
-                <span class="step-check">3</span>
-                <span>إنشاء مسار التعليقات (comments)</span>
-            </div>
-            <div class="step-item" id="step4">
-                <span class="step-check">4</span>
-                <span>التحقق من صحة البيانات</span>
-            </div>
+        <!-- أزرار التحكم -->
+        <div class="button-group">
+            <button class="setup-button test-button" onclick="testConnection()" id="testButton">
+                🔍 اختبار الاتصال
+            </button>
+            <button class="setup-button" onclick="initializeDatabase()" id="setupButton">
+                🚀 بدء تهيئة قاعدة البيانات
+            </button>
         </div>
 
-        <!-- زر التهيئة -->
-        <button class="setup-button" id="setupButton" onclick="initializeDatabase()">
-            🚀 بدء تهيئة قاعدة البيانات
-        </button>
-
         <p class="note">
-            ⚠️ <strong>ملاحظة هامة:</strong> هذا الإجراء مطلوب مرة واحدة فقط.<br>
-            سيتم إنشاء هيكل البيانات الأساسي مع إعدادات افتراضية.<br>
-            البيانات الموجودة مسبقاً لن تتأثر.
+            💡 <strong>نصيحة:</strong> بعد نجاح التهيئة، يمكنك إعادة القواعد إلى الوضع الآمن:<br>
+            <code style="direction: ltr; display: inline-block; background: #f5f5f5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-top: 4px;">".read": true, ".write": "auth != null"</code>
         </p>
     </div>
 
@@ -419,88 +518,158 @@
         }
 
         // ============================================
-        // تحديث حالة الخطوة
+        // نسخ كود القواعد
         // ============================================
-        function updateStep(stepNumber, status, message) {
-            const step = document.getElementById('step' + stepNumber);
-            const stepsList = document.getElementById('stepsList');
-            
-            stepsList.classList.add('show');
-            
-            // إزالة الحالات السابقة
-            step.classList.remove('completed', 'failed');
-            
-            if (status === 'loading') {
-                step.querySelector('.step-check').textContent = '⏳';
-            } else if (status === 'completed') {
-                step.classList.add('completed');
-                step.querySelector('.step-check').textContent = '✅';
-            } else if (status === 'failed') {
-                step.classList.add('failed');
-                step.querySelector('.step-check').textContent = '❌';
-            }
+        function copyRules() {
+            const rulesCode = `{
+  "rules": {
+    "settings": {
+      ".read": true,
+      ".write": true
+    },
+    "comments": {
+      ".read": true,
+      ".write": true,
+      "$commentId": {
+        ".validate": "newData.hasChildren(['name', 'side', 'status', 'message', 'timestamp'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length <= 100"
+        },
+        "side": {
+          ".validate": "newData.isString() && (newData.val() === 'groom' || newData.val() === 'bride')"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'attending' || newData.val() === 'maybe' || newData.val() === 'declined')"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    }
+  }
+}`;
+
+            navigator.clipboard.writeText(rulesCode).then(() => {
+                const copyBtn = document.getElementById('copyBtn');
+                copyBtn.textContent = '✅ تم النسخ!';
+                copyBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 نسخ';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                alert('فشل النسخ. الرجاء نسخ الكود يدوياً.');
+            });
         }
 
         // ============================================
-        // عرض حالة التهيئة
+        // عرض الحالة
         // ============================================
-        function showStatus(type, icon, message) {
+        function showStatus(type, message) {
             const statusArea = document.getElementById('statusArea');
-            const statusIcon = document.getElementById('statusIcon');
             const statusMessage = document.getElementById('statusMessage');
             
             statusArea.className = 'status-area ' + type;
-            statusIcon.textContent = icon;
             statusMessage.textContent = message;
+            statusArea.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('statusArea').style.display = 'none';
         }
 
         // ============================================
-        // الدالة الرئيسية: تهيئة قاعدة البيانات
+        // اختبار الاتصال
         // ============================================
-        async function initializeDatabase() {
-            const setupButton = document.getElementById('setupButton');
+        function testConnection() {
+            const testButton = document.getElementById('testButton');
+            testButton.disabled = true;
+            testButton.textContent = '⏳ جاري الاختبار...';
             
-            // تعطيل الزر أثناء التنفيذ
-            setupButton.disabled = true;
-            setupButton.textContent = '⏳ جاري التهيئة...';
-            
-            // إخفاء الحالة السابقة
-            document.getElementById('statusArea').className = 'status-area';
-            document.getElementById('stepsList').classList.remove('show');
-            
-            // إعادة ضبط الخطوات
-            for (let i = 1; i <= 4; i++) {
-                const step = document.getElementById('step' + i);
-                step.classList.remove('completed', 'failed');
-                step.querySelector('.step-check').textContent = i;
-            }
-            
-            // الخطوة 1: الاتصال بقاعدة البيانات
-            updateStep(1, 'loading');
-            showStatus('loading', '🔄', 'جاري الاتصال بقاعدة البيانات...');
+            hideStatus();
             
             if (!isInitialized) {
                 const connected = initializeFirebaseApp();
                 if (!connected) {
-                    updateStep(1, 'failed');
-                    showStatus('error', '❌', 'فشل الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.');
-                    resetButton(setupButton);
+                    showStatus('error', '❌ فشل الاتصال بـ Firebase. تأكد من إعدادات المشروع.');
+                    resetTestButton(testButton);
                     return;
                 }
             }
             
-            // انتظار قليل للتأكد من الاتصال
-            await sleep(800);
-            updateStep(1, 'completed');
+            // محاولة كتابة اختبارية
+            const testRef = database.ref('_test_connection_' + Date.now());
+            testRef.set({
+                test: true,
+                timestamp: Date.now()
+            }).then(() => {
+                // نجاح الكتابة
+                showStatus('success', '✅ الاتصال ممتاز! قاعدة البيانات تقبل الكتابة. يمكنك الآن بدء التهيئة.');
+                
+                // حذف البيانات الاختبارية
+                testRef.remove().then(() => {
+                    console.log('🗑️ تم حذف بيانات الاختبار');
+                }).catch(() => {
+                    console.log('⚠️ لم نتمكن من حذف بيانات الاختبار');
+                });
+                
+                resetTestButton(testButton);
+                
+                // إخفاء تحذير الصلاحيات
+                const warningBox = document.getElementById('permissionWarning');
+                warningBox.className = 'alert-box success';
+                warningBox.innerHTML = '<h4>✅ الصلاحيات سليمة!</h4><p>قاعدة البيانات تقبل القراءة والكتابة. يمكنك بدء التهيئة الآن.</p>';
+                
+            }).catch((error) => {
+                // فشل الكتابة
+                if (error.code === 'PERMISSION_DENIED') {
+                    showStatus('error', '❌ تم رفض الإذن! لم يتم تحديث قواعد الأمان بعد. الرجاء اتباع الخطوات أعلاه لتحديث القواعد أولاً.');
+                } else {
+                    showStatus('error', '❌ فشل الاختبار: ' + error.message);
+                }
+                resetTestButton(testButton);
+            });
+        }
+
+        function resetTestButton(button) {
+            button.disabled = false;
+            button.textContent = '🔍 اختبار الاتصال';
+        }
+
+        // ============================================
+        // تهيئة قاعدة البيانات
+        // ============================================
+        async function initializeDatabase() {
+            const setupButton = document.getElementById('setupButton');
             
-            // الخطوة 2: إنشاء مسار الإعدادات
-            updateStep(2, 'loading');
-            showStatus('loading', '🔄', 'جاري إنشاء مسار الإعدادات (settings)...');
+            setupButton.disabled = true;
+            setupButton.textContent = '⏳ جاري التهيئة...';
             
+            hideStatus();
+            
+            if (!isInitialized) {
+                const connected = initializeFirebaseApp();
+                if (!connected) {
+                    showStatus('error', '❌ فشل الاتصال بقاعدة البيانات.');
+                    resetSetupButton(setupButton);
+                    return;
+                }
+            }
+            
+            console.log('🚀 بدء تهيئة قاعدة البيانات...');
+            showStatus('loading', '⏳ جاري إنشاء هيكل البيانات...');
+            
+            let hasError = false;
+            let errorMessage = '';
+            
+            // الخطوة 1: إنشاء مسار الإعدادات
             try {
+                console.log('📝 إنشاء مسار settings...');
                 const settingsRef = database.ref('settings');
                 
-                // البيانات الافتراضية للإعدادات
                 const defaultSettings = {
                     image: "",
                     date: "15 يونيو 2026",
@@ -513,30 +682,33 @@
                 };
                 
                 await settingsRef.update(defaultSettings);
-                console.log('✅ تم إنشاء مسار settings');
-                updateStep(2, 'completed');
+                console.log('✅ تم إنشاء مسار settings بنجاح');
             } catch (error) {
                 console.error('❌ فشل إنشاء مسار settings:', error);
-                updateStep(2, 'failed');
-                showStatus('error', '❌', 'فشل إنشاء مسار الإعدادات: ' + error.message);
-                resetButton(setupButton);
+                hasError = true;
+                if (error.code === 'PERMISSION_DENIED') {
+                    errorMessage = '❌ تم رفض الإذن! لم يتم تحديث قواعد الأمان بعد.\n\nالرجاء:\n1. نسخ كود القواعد من الأعلى\n2. الذهاب إلى Firebase Console\n3. لصق القواعد ونشرها\n4. ثم العودة والضغط على "اختبار الاتصال" أولاً';
+                } else {
+                    errorMessage = '❌ فشل إنشاء مسار settings: ' + error.message;
+                }
+            }
+            
+            if (hasError) {
+                showStatus('error', errorMessage);
+                resetSetupButton(setupButton);
                 return;
             }
             
-            await sleep(600);
+            await sleep(500);
             
-            // الخطوة 3: إنشاء مسار التعليقات
-            updateStep(3, 'loading');
-            showStatus('loading', '🔄', 'جاري إنشاء مسار التعليقات (comments)...');
-            
+            // الخطوة 2: إنشاء مسار التعليقات
             try {
+                console.log('📝 التحقق من مسار comments...');
                 const commentsRef = database.ref('comments');
                 
-                // التحقق من وجود مسار comments، إذا لم يكن موجوداً ننشئ تعليق ترحيبي
                 const snapshot = await commentsRef.once('value');
                 
                 if (!snapshot.exists()) {
-                    // إنشاء تعليق ترحيبي أولي
                     const welcomeComment = {
                         name: "فريق التنظيم",
                         side: "groom",
@@ -548,54 +720,47 @@
                     await commentsRef.push(welcomeComment);
                     console.log('✅ تم إنشاء مسار comments مع تعليق ترحيبي');
                 } else {
-                    console.log('ℹ️ مسار comments موجود مسبقاً، لم يتم التعديل عليه');
+                    console.log('ℹ️ مسار comments موجود مسبقاً');
                 }
-                
-                updateStep(3, 'completed');
             } catch (error) {
                 console.error('❌ فشل إنشاء مسار comments:', error);
-                updateStep(3, 'failed');
-                showStatus('error', '❌', 'فشل إنشاء مسار التعليقات: ' + error.message);
-                resetButton(setupButton);
+                showStatus('error', '❌ فشل إنشاء مسار التعليقات: ' + error.message);
+                resetSetupButton(setupButton);
                 return;
             }
             
-            await sleep(600);
+            await sleep(500);
             
-            // الخطوة 4: التحقق من صحة البيانات
-            updateStep(4, 'loading');
-            showStatus('loading', '🔄', 'جاري التحقق من صحة البيانات...');
-            
+            // الخطوة 3: التحقق النهائي
             try {
-                // قراءة البيانات للتأكد
+                console.log('🔍 التحقق النهائي...');
                 const settingsSnapshot = await database.ref('settings').once('value');
                 const commentsSnapshot = await database.ref('comments').once('value');
                 
                 if (settingsSnapshot.exists() && commentsSnapshot.exists()) {
-                    const settingsData = settingsSnapshot.val();
-                    const commentsData = commentsSnapshot.val();
+                    console.log('✅ التحقق النهائي ناجح!');
+                    console.log('📊 settings:', Object.keys(settingsSnapshot.val()).length, 'حقول');
+                    console.log('📊 comments:', Object.keys(commentsSnapshot.val()).length, 'تعليقات');
                     
-                    console.log('✅ التحقق من البيانات:', {
-                        settings: Object.keys(settingsData),
-                        commentsCount: Object.keys(commentsData).length
-                    });
-                    
-                    updateStep(4, 'completed');
-                    
-                    // نجاح كامل
-                    showStatus('success', '🎉', 
-                        'تمت تهيئة قاعدة البيانات بنجاح!\n\n' +
+                    showStatus('success', 
+                        '🎉 تمت تهيئة قاعدة البيانات بنجاح!\n\n' +
                         '✅ مسار الإعدادات (settings) جاهز\n' +
-                        '✅ مسار التعليقات (comments) جاهز\n\n' +
-                        'يمكنك الآن استخدام دعوة الزفاف بشكل طبيعي.'
+                        '✅ مسار التعليقات (comments) جاهز\n' +
+                        '✅ تعليق ترحيبي مضاف\n\n' +
+                        '💡 يمكنك الآن استخدام دعوة الزفاف بشكل طبيعي.\n' +
+                        '📅 البيانات الافتراضية: 15 يونيو 2026 - 7:00 مساءً'
                     );
                     
                     setupButton.textContent = '✅ تمت التهيئة بنجاح';
                     setupButton.style.background = 'linear-gradient(135deg, #a8d5a2, #8cc088)';
                     
-                    // تفعيل الزر مرة أخرى بعد 5 ثواني
+                    // إخفاء تحذير الصلاحيات
+                    const warningBox = document.getElementById('permissionWarning');
+                    warningBox.className = 'alert-box success';
+                    warningBox.innerHTML = '<h4>🎉 قاعدة البيانات جاهزة!</h4><p>تم تهيئة جميع المسارات المطلوبة بنجاح. يمكنك الآن استخدام دعوة الزفاف.</p>';
+                    
                     setTimeout(() => {
-                        resetButton(setupButton);
+                        resetSetupButton(setupButton);
                     }, 5000);
                     
                 } else {
@@ -603,18 +768,9 @@
                 }
             } catch (error) {
                 console.error('❌ فشل التحقق:', error);
-                updateStep(4, 'failed');
-                showStatus('error', '❌', 'فشل التحقق من البيانات: ' + error.message);
-                resetButton(setupButton);
-                return;
+                showStatus('error', '❌ فشل التحقق النهائي: ' + error.message);
+                resetSetupButton(setupButton);
             }
-            
-            console.log('🎉 تمت تهيئة قاعدة البيانات بالكامل بنجاح!');
-            console.log('📊 ملخص التهيئة:');
-            console.log('  - مسار settings: ✅');
-            console.log('  - مسار comments: ✅');
-            console.log('  - الإعدادات الافتراضية: ✅');
-            console.log('  - تعليق ترحيبي: ✅');
         }
 
         // ============================================
@@ -624,51 +780,35 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        function resetButton(button) {
+        function resetSetupButton(button) {
             button.disabled = false;
             button.textContent = '🚀 بدء تهيئة قاعدة البيانات';
             button.style.background = 'linear-gradient(135deg, #e8c4b8, #dbb5a8)';
         }
 
         // ============================================
-        // التحقق من حالة الاتصال عند تحميل الصفحة
-        // ============================================
-        function checkConnectionOnLoad() {
-            if (initializeFirebaseApp()) {
-                console.log('✅ الاتصال بقاعدة البيانات جاهز');
-                
-                // التحقق من وجود البيانات
-                database.ref('settings').once('value')
-                    .then((snapshot) => {
-                        if (snapshot.exists()) {
-                            console.log('ℹ️ قاعدة البيانات مهيأة مسبقاً');
-                            console.log('الإعدادات الحالية:', snapshot.val());
-                            
-                            // إظهار رسالة للمستخدم
-                            const statusArea = document.getElementById('statusArea');
-                            statusArea.className = 'status-area success';
-                            document.getElementById('statusIcon').textContent = '✅';
-                            document.getElementById('statusMessage').textContent = 
-                                'قاعدة البيانات مهيأة مسبقاً وتحتوي على بيانات. يمكنك إعادة التهيئة إذا أردت تحديث الإعدادات الافتراضية.';
-                        } else {
-                            console.log('ℹ️ قاعدة البيانات غير مهيأة بعد');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('❌ فشل قراءة الإعدادات:', error);
-                    });
-            }
-        }
-
-        // ============================================
         // بدء التشغيل
         // ============================================
         window.addEventListener('DOMContentLoaded', () => {
-            console.log('🌸 أداة تهيئة قاعدة البيانات - Mahmoud & Rewan');
+            console.log('🔧 أداة تهيئة قاعدة البيانات - Mahmoud & Rewan');
             console.log('📅 نقابة تكنولوجيا المعلومات والبرمجيات المصرية © 2026');
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             
-            checkConnectionOnLoad();
+            // تهيئة Firebase
+            if (initializeFirebaseApp()) {
+                console.log('✅ Firebase مهيأ وجاهز');
+                
+                // اختبار سريع للصلاحيات
+                database.ref('.info/connected').on('value', (snap) => {
+                    if (snap.val() === true) {
+                        console.log('✅ متصل بقاعدة البيانات');
+                    } else {
+                        console.log('❌ غير متصل بقاعدة البيانات');
+                    }
+                });
+            } else {
+                console.error('❌ فشل تهيئة Firebase');
+            }
         });
 
         // ============================================
