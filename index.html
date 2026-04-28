@@ -6,27 +6,8 @@
     <title>Mahmoud & Rewan | Wedding Invitation</title>
 
     <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBU4KXydbqrKpiN6U6gXDv8ic7IQS6Ard0",
-            authDomain: "mahmoudrewan.firebaseapp.com",
-            databaseURL: "https://mahmoudrewan-default-rtdb.firebaseio.com",
-            projectId: "mahmoudrewan",
-            storageBucket: "mahmoudrewan.firebasestorage.app",
-            messagingSenderId: "621529428304",
-            appId: "1:621529428304:web:7391f1771b4033d4687c55",
-            measurementId: "G-4RP5WLVVRJ"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        window.db = getDatabase(app);
-        window.firebaseReady = true;
-        document.dispatchEvent(new Event('firebaseReady'));
-        console.log('✅ Firebase Initialized Successfully');
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <!-- خطوط راقية وناعمة -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Great+Vibes&family=Tajawal:wght@200;300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=El+Messiri:wght@300;400;500;600;700&family=Reem+Kufi:wght@300;400;500;600;700&family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1139,9 +1120,21 @@
             color: white;
         }
 
+        .admin-btn.save:hover {
+            background: linear-gradient(135deg, #96a890, #7d9878);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
         .admin-btn.close {
             background: #d5c5b8;
             color: white;
+        }
+
+        .admin-btn.close:hover {
+            background: #c9b5a5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
         .admin-btn:hover {
@@ -1175,6 +1168,52 @@
         .delete-mini-btn:hover {
             background: #fdf0f0;
             border-color: #d49595;
+        }
+
+        /* ============================================
+           رسائل التنبيه في لوحة التحكم
+           ============================================ */
+        .admin-alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: none;
+            animation: alertSlideIn 0.4s ease;
+        }
+
+        @keyframes alertSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .admin-alert.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            display: block;
+        }
+
+        .admin-alert.error {
+            background: #fef0f0;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            display: block;
+        }
+
+        .admin-alert.loading {
+            background: #fff8e1;
+            color: #f57f17;
+            border: 1px solid #ffe082;
+            display: block;
         }
 
         /* ============================================
@@ -1453,6 +1492,9 @@
                 </div>
             </div>
 
+            <!-- رسالة التنبيه -->
+            <div class="admin-alert" id="adminAlert"></div>
+
             <div class="admin-form">
                 <h3>📝 تعديل بيانات الحفل</h3>
                 <input type="url" id="adminImage" placeholder="رابط صورة العروسين">
@@ -1473,6 +1515,27 @@
 
     <script>
         // ============================================
+        // إعدادات Firebase
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBU4KXydbqrKpiN6U6gXDv8ic7IQS6Ard0",
+            authDomain: "mahmoudrewan.firebaseapp.com",
+            databaseURL: "https://mahmoudrewan-default-rtdb.firebaseio.com",
+            projectId: "mahmoudrewan",
+            storageBucket: "mahmoudrewan.firebasestorage.app",
+            messagingSenderId: "621529428304",
+            appId: "1:621529428304:web:7391f1771b4033d4687c55",
+            measurementId: "G-4RP5WLVVRJ"
+        };
+
+        // تهيئة Firebase
+        if (!firebase.apps || !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+        console.log('✅ Firebase Database جاهز');
+
+        // ============================================
         // المتغيرات العامة
         // ============================================
         let selectedSide = '';
@@ -1482,67 +1545,84 @@
         let adminClickTimer = null;
 
         // ============================================
-        // انتظار تجهيز Firebase
+        // دوال عرض التنبيهات في لوحة التحكم
         // ============================================
-        function waitForFirebase(callback) {
-            if (window.firebaseReady && window.db) {
-                callback();
-            } else {
-                document.addEventListener('firebaseReady', callback, { once: true });
-            }
-        }
-
-        // ============================================
-        // قراءة إعدادات الحفل من Firebase
-        // ============================================
-        function loadSettings() {
-            waitForFirebase(() => {
-                const settingsRef = window.db ? window.db.ref('settings') : null;
-                if (!settingsRef) {
-                    setTimeout(loadSettings, 500);
-                    return;
-                }
-
-                settingsRef.on('value', (snapshot) => {
-                    const data = snapshot.val() || {};
-
-                    document.getElementById('eventDate').textContent = data.date || 'يحدد لاحقاً';
-                    document.getElementById('eventTime').textContent = data.time || 'يحدد لاحقاً';
-
-                    if (data.image) {
-                        document.getElementById('coupleImage').src = data.image;
-                    }
-
-                    if (data.targetDateTime) {
-                        weddingTargetDate = new Date(data.targetDateTime).getTime();
-                    }
-
-                    document.getElementById('adminImage').value = data.image || '';
-                    document.getElementById('adminDate').value = data.date || '';
-                    document.getElementById('adminTime').value = data.time || '';
-                    document.getElementById('adminTargetDate').value = data.targetDateTime || '';
-                });
-            });
+        function showAdminAlert(type, message) {
+            const alert = document.getElementById('adminAlert');
+            alert.className = 'admin-alert ' + type;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            // إخفاء التنبيه بعد 5 ثواني
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
         }
 
         // ============================================
         // حفظ إعدادات الحفل
         // ============================================
         function saveSettings() {
-            waitForFirebase(() => {
-                const settingsRef = window.db.ref('settings');
-                const settings = {
-                    image: document.getElementById('adminImage').value,
-                    date: document.getElementById('adminDate').value,
-                    time: document.getElementById('adminTime').value,
-                    targetDateTime: document.getElementById('adminTargetDate').value
-                };
+            const image = document.getElementById('adminImage').value.trim();
+            const date = document.getElementById('adminDate').value.trim();
+            const time = document.getElementById('adminTime').value.trim();
+            const targetDateTime = document.getElementById('adminTargetDate').value;
 
-                settingsRef.set(settings).then(() => {
-                    alert('✅ تم حفظ جميع البيانات بنجاح!');
-                }).catch((error) => {
-                    alert('❌ حدث خطأ: ' + error.message);
+            // عرض رسالة تحميل
+            showAdminAlert('loading', '⏳ جاري حفظ البيانات...');
+
+            const settingsRef = database.ref('settings');
+            const settingsData = {
+                image: image,
+                date: date,
+                time: time,
+                targetDateTime: targetDateTime,
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            settingsRef.update(settingsData)
+                .then(() => {
+                    console.log('✅ تم حفظ الإعدادات بنجاح');
+                    showAdminAlert('success', '✅ تم حفظ جميع البيانات بنجاح! سيتم تحديث الصفحة تلقائياً.');
+                    
+                    // إعادة تحميل الإعدادات
+                    loadSettings();
+                })
+                .catch((error) => {
+                    console.error('❌ فشل حفظ الإعدادات:', error);
+                    showAdminAlert('error', '❌ فشل حفظ البيانات: ' + error.message);
                 });
+        }
+
+        // ============================================
+        // قراءة إعدادات الحفل من Firebase
+        // ============================================
+        function loadSettings() {
+            const settingsRef = database.ref('settings');
+
+            settingsRef.on('value', (snapshot) => {
+                const data = snapshot.val() || {};
+
+                document.getElementById('eventDate').textContent = data.date || 'يحدد لاحقاً';
+                document.getElementById('eventTime').textContent = data.time || 'يحدد لاحقاً';
+
+                if (data.image) {
+                    document.getElementById('coupleImage').src = data.image;
+                }
+
+                if (data.targetDateTime) {
+                    weddingTargetDate = new Date(data.targetDateTime).getTime();
+                }
+
+                // تحديث حقول لوحة التحكم
+                document.getElementById('adminImage').value = data.image || '';
+                document.getElementById('adminDate').value = data.date || '';
+                document.getElementById('adminTime').value = data.time || '';
+                document.getElementById('adminTargetDate').value = data.targetDateTime || '';
+                
+                console.log('✅ تم تحميل الإعدادات من Firebase');
+            }, (error) => {
+                console.error('❌ فشل تحميل الإعدادات:', error);
             });
         }
 
@@ -1606,22 +1686,22 @@
                 return;
             }
 
-            waitForFirebase(() => {
-                const commentsRef = window.db.ref('comments');
-                const newComment = {
-                    name: name,
-                    side: selectedSide,
-                    status: status,
-                    message: message,
-                    timestamp: Date.now()
-                };
+            const commentsRef = database.ref('comments');
+            const newComment = {
+                name: name,
+                side: selectedSide,
+                status: status,
+                message: message,
+                timestamp: Date.now()
+            };
 
-                commentsRef.push(newComment).then(() => {
+            commentsRef.push(newComment)
+                .then(() => {
                     const sideText = selectedSide === 'groom' ? 'العريس محمود' : 'العروسة روان';
                     const statusText = status === 'attending' ? 'سأحضر' : status === 'maybe' ? 'سأحاول' : 'أعتذر';
 
                     document.getElementById('modalMessage').innerHTML =
-                        `💝 شكراً ${name}!<br>
+                        `💝 شكراً ${escapeHtml(name)}!<br>
                         <small style="color:#9c8b8b;">تم تسجيل تهنئتك من جهة ${sideText}</small><br>
                         <small style="color:#b8956e;">الحالة: ${statusText}</small>`;
 
@@ -1636,10 +1716,10 @@
                     selectedSide = '';
 
                     createCelebrationBurst();
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     alert('❌ حدث خطأ أثناء الإرسال: ' + error.message);
                 });
-            });
         }
 
         // ============================================
@@ -1653,30 +1733,42 @@
         // تحميل التعليقات
         // ============================================
         function loadComments() {
-            waitForFirebase(() => {
-                const commentsRef = window.db.ref('comments');
+            const commentsRef = database.ref('comments');
 
-                commentsRef.on('value', (snapshot) => {
-                    allComments = [];
-                    const data = snapshot.val() || {};
+            commentsRef.on('value', (snapshot) => {
+                allComments = [];
+                const data = snapshot.val() || {};
 
-                    Object.keys(data).forEach(key => {
-                        allComments.push({
-                            id: key,
-                            ...data[key]
-                        });
+                Object.keys(data).forEach(key => {
+                    allComments.push({
+                        id: key,
+                        ...data[key]
                     });
-
-                    allComments.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-                    updateStats();
-                    
-                    const activeFilter = document.querySelector('.filter-pill.active');
-                    const currentFilter = activeFilter ? activeFilter.getAttribute('onclick').match(/'(\w+)'/)[1] : 'all';
-                    filterComments(currentFilter, activeFilter);
-
-                    updateAdminCommentsList();
                 });
+
+                allComments.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                updateStats();
+
+                const activeFilter = document.querySelector('.filter-pill.active');
+                const currentFilter = activeFilter ? 'all' : 'all';
+                
+                if (activeFilter) {
+                    const onclickAttr = activeFilter.getAttribute('onclick');
+                    if (onclickAttr && onclickAttr.includes("'groom'")) {
+                        filterComments('groom', activeFilter);
+                    } else if (onclickAttr && onclickAttr.includes("'bride'")) {
+                        filterComments('bride', activeFilter);
+                    } else {
+                        filterComments('all', activeFilter);
+                    }
+                } else {
+                    filterComments('all', document.querySelector('.filter-pill'));
+                }
+
+                updateAdminCommentsList();
+            }, (error) => {
+                console.error('❌ فشل تحميل التعليقات:', error);
             });
         }
 
@@ -1776,13 +1868,15 @@
         // ============================================
         function deleteComment(commentId) {
             if (confirm('هل أنت متأكد من حذف هذا التعليق؟')) {
-                waitForFirebase(() => {
-                    window.db.ref('comments/' + commentId).remove().then(() => {
+                database.ref('comments/' + commentId).remove()
+                    .then(() => {
                         console.log('✅ تم حذف التعليق');
-                    }).catch((error) => {
-                        alert('❌ حدث خطأ: ' + error.message);
+                        showAdminAlert('success', '✅ تم حذف التعليق بنجاح');
+                    })
+                    .catch((error) => {
+                        console.error('❌ فشل حذف التعليق:', error);
+                        showAdminAlert('error', '❌ فشل حذف التعليق: ' + error.message);
                     });
-                });
             }
         }
 
@@ -1811,6 +1905,7 @@
         // ============================================
         function closeAdmin() {
             document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminAlert').style.display = 'none';
         }
 
         // ============================================
@@ -1911,9 +2006,11 @@
         // بدء التطبيق
         // ============================================
         function init() {
+            console.log('💝 بدء تحميل دعوة زفاف محمود وروان');
             loadSettings();
             loadComments();
             handleScrollAppear();
+            updateCountdown();
         }
 
         if (document.readyState === 'loading') {
@@ -1939,6 +2036,7 @@
 
         console.log('💝 تم تحميل دعوة زفاف محمود وروان بنجاح');
         console.log('🌸 نقابة تكنولوجيا المعلومات والبرمجيات المصرية 2026');
+        console.log('✅ جميع الدوال جاهزة للعمل');
     </script>
 </body>
 </html>
